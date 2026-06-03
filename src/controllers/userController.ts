@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
-import { getAllUsers, createUser, deleteUser } from '../models/userModel';
+// PERBAIKAN: Menambahkan 'updateUser' ke dalam daftar import dari userModel
+import { getAllUsers, createUser, deleteUser, updateUser } from '../models/userModel';
 
-// Tambahan: Membuat interface kustom agar TypeScript mengenali properti 'user'
+// Interface kustom agar TypeScript mengenali properti 'user'
 interface AuthRequest extends Request {
   user?: { id: number; role_id: number };
 }
@@ -46,5 +47,23 @@ export const removeUser = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("❌ Error di removeUser:", error);
     res.status(500).send("<h1>Gagal Menghapus Data User</h1>");
+  }
+};
+
+// FUNGSI EDIT USER
+export const editUser = async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { username, role_id } = req.body;
+    
+    // Berhasil dipanggil dengan aman karena sudah di-import di atas
+    await updateUser(id, { username, role_id: parseInt(role_id) });
+    res.redirect('/users');
+  } catch (error: any) {
+    console.error("❌ Error saat edit:", error);
+    res.status(500).send(`
+      <h1>Gagal Mengupdate User</h1>
+      <p>Pesan Error: ${error.message}</p>
+    `);
   }
 };

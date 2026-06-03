@@ -31,3 +31,14 @@ export const deleteUser = async (id: number) => {
   const [result] = await pool.query<ResultSetHeader>('DELETE FROM users WHERE id = ?', [id]);
   return result;
 };
+
+export const updateUser = async (id: number, data: { username: string, role_id: number }) => {
+    // Kita impor pool dari file konfigurasi database di bagian atas file ini jika belum ada
+    const { default: pool } = await import('../config/database');
+    
+    const [result] = await pool.query(
+        'UPDATE users SET username = ?, role_id = ? WHERE id = ?',
+        [data.username, data.role_id, id]
+    );
+    return result;
+};
